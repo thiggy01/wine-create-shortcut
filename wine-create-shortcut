@@ -4,7 +4,9 @@
 # by Thiago silva
 
 # Test if there is a argument.
-if [[ $(file --mime-type -b "$1") = application/* ]]; then
+if [[ $(file --mime-type -b "$1") = application/* ]]
+
+then
 
 # Get the full path, the name and directory name of submited application file. 
 	myFile=$(realpath "$1")
@@ -16,14 +18,14 @@ if [[ $(file --mime-type -b "$1") = application/* ]]; then
 	wrestool -x -t 14 "$myFile" > "/tmp/$myBaseName.ico"
 	echo Converting icon to png files...
 	convert -alpha on "/tmp/$myBaseName.ico" "/tmp/$myBaseName.png"
-	echo Copying "$(ls -S -1 "/tmp/$myBasename"*".png" | tac | tail -n 1)" to "$myFile.icon.png" ...
-	cp "$(ls -S -1 "/tmp/$myBaseName"*".png" | tac | tail -n 1)" "$myFile.icon.png"
+	echo Copying "$(ls -S -1 "/tmp/$myBasename"*".png" | head -n 1)" to "$myFile.icon.png" ...
+	cp "$(ls -S -1 "/tmp/$myBaseName"*".png"  | head -n 1)" "$myFile.icon.png"
 
 # Display graphical dialog boxes to receive category and name inputs from the user.
-	appCategory=$(zenity --title "wine-createshortcut" --height=450 --list --radiolist --column " " \
+	appCategory=$(zenity --title "wine-create-shortcut" --height=450 --list --radiolist --column " " \
 --column "Categories" 0 AudioVideo 0 Audio 0 Video 0 Development 0 Education TRUE Game 0 Graphics 0 \
 Network 0 Office 0 Settings 0 System 0 Utility  --text "Select a Category:")
-	appName=$(zenity --title "wine-createshortcut" --text "Enter a name for your shortcut" --entry)
+	appName=$(zenity --title "wine-create-shortcut" --text "Enter a name for your shortcut" --entry)
 
 # Generate desktop entry specifications to be added to the application launcher.
 	echo Creating shortcut contents...
