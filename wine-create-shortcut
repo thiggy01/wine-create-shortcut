@@ -3,7 +3,7 @@
 # This script will create a shortcut on applications menu for windows programs installed with wine.
 # by Thiago silva
 
-# Test if there is a argument.
+# Check if an application argument was submited.
 if [[ $(file --mime-type -b "$1") = application/* ]]
 
 then
