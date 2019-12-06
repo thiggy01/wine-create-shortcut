@@ -9,7 +9,7 @@ menu folder.
 
 Download and change its execution permission with the following commands:
 
-    curl github.com/thiggy01/wine-create-shortcut/raw/master/wine-create-shortcut
+    curl -L -O github.com/thiggy01/wine-create-shortcut/raw/master/wine-create-shortcut
     chmod +x wine-create-shortcut
     
 ## Dependencies
