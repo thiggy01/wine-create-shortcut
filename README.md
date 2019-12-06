@@ -7,9 +7,9 @@ menu folder.
 
 ## Installing
 
-Download and set it to execution with the following commands:
+Download and change its execution permission with the following commands:
 
-    curl https://raw.githubusercontent.com/thiggy01/wine-create-shortcut/master/wine-create-shortcut > wine-create-shortcut
+    curl github.com/thiggy01/wine-create-shortcut/raw/master/wine-create-shortcut
     chmod +x wine-create-shortcut
     
 ## Dependencies
@@ -22,5 +22,5 @@ distributions.
 ## Usage
 
 Run the scrip with this command: `./wine-create-shortcut path/to/app.exe`. It will display a lot of messages showing what
-it is doing and finally when it is done. After that, you should see the shortcut appearing on the applications menu of Gnome
+it is doing until it is done. After that, you should see the shortcut appearing on the applications menu of Gnome
 when you search for it.
