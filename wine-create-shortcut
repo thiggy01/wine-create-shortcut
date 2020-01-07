@@ -8,49 +8,51 @@
 # ============================================================================ #
 
 # Check if an application argument was submited.
-if [[ $(file --mime-type -b "$1") = application/* ]]
+if [[ $(file --mime-type -b "$1") = application/* ]]; then
 
-then
+    # Get the full path, the name and directory name of submited application file.
+    myFile=$(realpath "$1")
+    myBaseName=$(basename "$myFile")
+    myPath=$(dirname "$myFile")
 
-# Get the full path, the name and directory name of submited application file.
-	myFile=$(realpath "$1")
-	myBaseName=$(basename "$myFile")
-	myPath=$(dirname "$myFile")
+    # Function to verify if required program is installed.
+    VerInst () {
+	if [ $? -eq 127 ]; then
+	    echo "$1 package is not installed."
+	    echo "Install it before running this script."
+	    echo "Aborting."
+	    exit 1
+	fi
+    }
 
-# Extract icon and convert it to several png files of diferent quality, 
-# selecting the best one.
-	echo "Extracting icon..."
-	wrestool -x -t 14 "$myFile" > "/tmp/$myBaseName.ico" 2> /dev/null
-	echo Converting icon to png files...
-	convert -alpha on "/tmp/$myBaseName.ico" "/tmp/$myBaseName.png"
-	echo Copying "$(ls -S -1 "/tmp/$myBasename"*".png" | head -n 1)" to "$myFile\
-.icon.png" ...
-	cp "$(ls -S -1 "/tmp/$myBaseName"*".png"  | head -n 1)" "$myFile.icon.png"
+    # Extract icon and convert it to several png files of diferent quality, 
+    wrestool -x -t 14 "$myFile" > "/tmp/$myBaseName.ico" 2> /dev/null
+    VerInst icoutils
+    convert -alpha on "/tmp/$myBaseName.ico" "/tmp/$myBaseName.png" 2> /dev/null
+    VerInst imagemagick
+    # Select the best png image file.
+    cp "$(ls -S -1 "/tmp/$myBaseName"*".png"  | head -n 1)" "$myFile.icon.png"
 
-# Display graphical dialog boxes to receive category and name inputs from the
-# user.
-	appCategory=$(zenity --title "wine-create-shortcut" --height=450 --list \
+    # Get the app category and shortcut name inputs from the user.
+    appCategory=$(zenity --title "wine-create-shortcut" --height=450 --list \
 --radiolist --column " " --column "Categories" 0 AudioVideo 0 Audio 0 Video 0 \
 Development 0 Education TRUE Game 0 Graphics 0 Network 0 Office 0 Settings 0 \
-System 0 Utility  --text "Select a Category:")
-	appName=$(zenity --title "wine-create-shortcut" --text "Enter a name for your \
+System 0 Utility  --text "Select a Category:" 2> /dev/null)
+    VerInst zenity
+    appName=$(zenity --title "wine-create-shortcut" --text "Enter a name for your \
 shortcut" --entry)
-
-# Generate desktop entry specifications to be added to the application launcher.
-	echo Creating shortcut contents...
-	deskEntry="[Desktop Entry]"\\n"Exec=wine start /Unix \""$myFile"\""\\n"Name=\
+    # Generate desktop entry specifications to be added to the application launcher.
+    deskEntry="[Desktop Entry]"\\n"Exec=wine start /Unix \""$myFile"\""\\n"Name=\
 $appName"\\n"Path=$myPath"\\n"Type=Application"\\n"Categories=Application;\
 $category;"\\n"Icon="$myFile.icon.png""
-
-# Create a .desktop file and add desktop entries in it, then link the launcher 
-# file to a shortcut on applications menu.
-	echo Creating .desktop file...
-	echo -e $deskEntry >"$myFile".desktop
-	echo Creating link on applications menu...
-	ln -s "$myFile.desktop" "$HOME/.local/share/applications/$myBaseName.desktop"
-
-# show this message when script has finished.
-	echo "Done."
+    # Create a .desktop file and add desktop entries in it.
+    echo -e $deskEntry >"$myFile".desktop
+    # link the launcher  file to a shortcut on applications menu.
+    ln -s "$myFile.desktop" "$HOME/.local/share/applications/$myBaseName.desktop"
+    # Test if the app link was created sucessfully on applications menu 
+    if [ $? -eq 0 ]; then
+    	echo "Shortcut created sucessfuly on applications menu."
+    fi
 
 else 
 
